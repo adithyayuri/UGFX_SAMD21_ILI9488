@@ -4,6 +4,14 @@
 
 src\app_setup.c
 
+src\ASF\sam0\drivers\sercom\sercom.c
+
+src\ASF\sam0\drivers\sercom\sercom_interrupt.c
+
+src\ASF\sam0\drivers\sercom\spi\spi.c
+
+src\ASF\sam0\drivers\sercom\spi\spi_interrupt.c
+
 src\ASF\thirdparty\freertos\freertos-8.0.1\Source\croutine.c
 
 src\ASF\thirdparty\freertos\freertos-8.0.1\Source\event_groups.c

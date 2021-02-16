@@ -13,6 +13,9 @@
 
 void configure_gclk2_out(void);
 
+void configure_spi_EXT3(void);
+void test_EXT3_SPI_write(void);
+
 
 
 #endif /* APP_SETUP_H_ */
