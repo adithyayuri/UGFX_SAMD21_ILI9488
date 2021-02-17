@@ -11,6 +11,9 @@
 struct spi_module spi_master_instance;
 // SPI Slave_Instance
 struct spi_slave_inst slave_disp;
+// TCC Instance
+struct tcc_module tcc_instance;
+
 
 // Test Variables from here
 #define BUF_LENGTH 20
@@ -60,13 +63,13 @@ void test_EXT3_SPI_write(void)
 	// Configure callbacks
 	configure_spi_master_callbacks();
 	// Select SPI Slave device
-	spi_select_slave(&spi_master_instance, &slave_disp, true);
+	//spi_select_slave(&spi_master_instance, &slave_disp, true);
 	// Start transceive job
-	//spi_write_buffer_job(&spi_master_instance, wr_buffer, BUF_LENGTH);
-	spi_transceive_buffer_job(&spi_master_instance, wr_buffer,rd_buffer,BUF_LENGTH);
-	while (!transrev_complete_spi_master) {	}
-	transrev_complete_spi_master = false;
-	spi_select_slave(&spi_master_instance, &slave_disp, false);
+	spi_write_buffer_job(&spi_master_instance, wr_buffer, BUF_LENGTH);
+	//spi_transceive_buffer_job(&spi_master_instance, wr_buffer,rd_buffer,BUF_LENGTH);
+	//while (!transrev_complete_spi_master) {	}
+	//transrev_complete_spi_master = false;
+	//spi_select_slave(&spi_master_instance, &slave_disp, false);
 }
 
 void configure_gclk2_out(void)
@@ -85,3 +88,23 @@ void configure_gclk2_out(void)
 	*/
 }
 
+void configure_backlight_timer(void)
+{
+	struct tcc_config config_tcc;
+	tcc_get_config_defaults(&config_tcc, CONF_PWM_MODULE);
+	config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV4;
+	config_tcc.counter.period = 1000;
+	config_tcc.compare.wave_generation = TCC_WAVE_GENERATION_SINGLE_SLOPE_PWM;
+	config_tcc.compare.match[CONF_PWM_CHANNEL] = 1;
+	config_tcc.pins.enable_wave_out_pin[CONF_PWM_OUTPUT] = true;
+	config_tcc.pins.wave_out_pin[CONF_PWM_OUTPUT]        = CONF_PWM_OUT_PIN;
+	config_tcc.pins.wave_out_pin_mux[CONF_PWM_OUTPUT]    = CONF_PWM_OUT_MUX;
+
+	tcc_init(&tcc_instance, CONF_PWM_MODULE, &config_tcc);
+	tcc_enable(&tcc_instance);
+}
+
+void lcd_backlight_brightness(uint16_t brightness)
+{
+	tcc_set_compare_value(&tcc_instance, CONF_PWM_CHANNEL, brightness*10);
+}

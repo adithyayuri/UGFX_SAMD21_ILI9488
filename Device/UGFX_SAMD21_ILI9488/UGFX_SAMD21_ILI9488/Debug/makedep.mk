@@ -6,6 +6,8 @@ src\app_setup.c
 
 src\ASF\sam0\drivers\sercom\sercom.c
 
+src\ASF\sam0\drivers\tcc\tcc.c
+
 src\ASF\sam0\drivers\sercom\sercom_interrupt.c
 
 src\ASF\sam0\drivers\sercom\spi\spi.c
