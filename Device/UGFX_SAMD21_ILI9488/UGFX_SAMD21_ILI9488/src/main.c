@@ -1,15 +1,18 @@
 #include <asf.h>
 #include "app_setup.h"
 #include "gfx.h"
+//#include "ugfx/src/gfx_mk.c"
 #include "peripheral_test.h"
 
 void configure_app(void);
 
-static void taskInit(void* pvParameters)
+static void GFX_init_task(void* pvParameters)
 {
 	(void)pvParameters;
 	
 	gfxInit();
+	
+	while(1);
 }
 
 void configure_app(void)
@@ -31,7 +34,7 @@ int main (void)
 	add_peripheral_tests();
     
 	// Create the initialization task
-    xTaskCreate(taskInit, "Initialization", 512, 0, tskIDLE_PRIORITY, 0);
+    xTaskCreate(GFX_init_task, "Initialization", 512, 0, tskIDLE_PRIORITY, 0);
 		
 	vTaskStartScheduler();
 	while(1);

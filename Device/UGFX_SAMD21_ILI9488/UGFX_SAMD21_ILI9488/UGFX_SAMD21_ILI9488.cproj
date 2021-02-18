@@ -672,6 +672,9 @@
     <Compile Include="src\ASF\sam0\drivers\sercom\sercom.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\ugfx\src\gfx_mk.c">
+      <SubType>compile</SubType>
+    </Compile>
     <None Include="src\ASF\sam0\drivers\tcc\quick_start_buffering\qs_tcc_buffering.h">
       <SubType>compile</SubType>
     </None>

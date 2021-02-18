@@ -32,7 +32,7 @@ void configure_spi_EXT3(void)
 	struct spi_config config_spi_master;
 
 	spi_get_config_defaults(&config_spi_master);
-	//config_spi_master.mode_specific.master.baudrate = 100000;
+	config_spi_master.mode_specific.master.baudrate = 4000000;
 	config_spi_master.mux_setting = CONF_MASTER_MUX_SETTING;
 	config_spi_master.pinmux_pad0 = CONF_MASTER_PINMUX_PAD0;
 	config_spi_master.pinmux_pad1 = CONF_MASTER_PINMUX_PAD1;
