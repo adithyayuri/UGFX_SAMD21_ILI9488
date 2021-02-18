@@ -82,13 +82,11 @@
 // From module: Part identification macros
 #include <parts.h>
 
-// From module: SERCOM Callback API
+// From module: SERCOM Polled API
 #include <sercom.h>
-#include <sercom_interrupt.h>
 
-// From module: SERCOM SPI - Serial Peripheral Interface (Callback APIs)
+// From module: SERCOM SPI - Serial Peripheral Interface (Polled APIs)
 #include <spi.h>
-#include <spi_interrupt.h>
 
 // From module: SYSTEM - Clock Management for SAMD21/R21/DA/HA
 #include <clock.h>

@@ -51,6 +51,5 @@
 #define CONF_MASTER_PINMUX_PAD3 EXT3_SPI_SERCOM_PINMUX_PAD3
 //[definition_master]
 
-
 #endif /* CONF_SPI_H_INCLUDED */
 

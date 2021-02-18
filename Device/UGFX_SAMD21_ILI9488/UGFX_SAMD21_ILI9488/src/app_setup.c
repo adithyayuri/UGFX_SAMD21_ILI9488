@@ -9,11 +9,8 @@
 
 // SPI Master_Instance
 struct spi_module spi_master_instance;
-// SPI Slave_Instance
-struct spi_slave_inst slave_disp;
 // TCC Instance
 struct tcc_module tcc_instance;
-
 
 // Test Variables from here
 #define BUF_LENGTH 20
@@ -33,11 +30,6 @@ static void callback_spi_master( struct spi_module *const module)
 void configure_spi_EXT3(void)
 {
 	struct spi_config config_spi_master;
-	struct spi_slave_inst_config slave_dev_config;
-
-	spi_slave_inst_get_config_defaults(&slave_dev_config);
-	slave_dev_config.ss_pin = CONF_MASTER_SS_PIN;
-	spi_attach_slave(&slave_disp, &slave_dev_config);
 
 	spi_get_config_defaults(&config_spi_master);
 	//config_spi_master.mode_specific.master.baudrate = 100000;
@@ -52,24 +44,22 @@ void configure_spi_EXT3(void)
 	spi_enable(&spi_master_instance);
 }
 
-void configure_spi_master_callbacks(void)
-{
-	spi_register_callback(&spi_master_instance, callback_spi_master, SPI_CALLBACK_BUFFER_TRANSCEIVED);
-	spi_enable_callback(&spi_master_instance, SPI_CALLBACK_BUFFER_TRANSCEIVED);
-}
-
 void test_EXT3_SPI_write(void)
 {
-	// Configure callbacks
-	configure_spi_master_callbacks();
+	// Set SPI CS Pin low
+	port_pin_set_output_level(CONF_MASTER_SS_PIN, false);
+	
+	// Set DCX Pin low
+	port_pin_set_output_level(LCD_DCX_PIN, true);
+	
 	// Select SPI Slave device
-	//spi_select_slave(&spi_master_instance, &slave_disp, true);
-	// Start transceive job
-	spi_write_buffer_job(&spi_master_instance, wr_buffer, BUF_LENGTH);
-	//spi_transceive_buffer_job(&spi_master_instance, wr_buffer,rd_buffer,BUF_LENGTH);
-	//while (!transrev_complete_spi_master) {	}
-	//transrev_complete_spi_master = false;
-	//spi_select_slave(&spi_master_instance, &slave_disp, false);
+	spi_write_buffer_wait(&spi_master_instance, wr_buffer, BUF_LENGTH);
+	
+	// Set DCX Pin low
+	port_pin_set_output_level(LCD_DCX_PIN, false);
+	
+	// Set SPI CS Pin high
+	port_pin_set_output_level(CONF_MASTER_SS_PIN, true);	
 }
 
 void configure_gclk2_out(void)
@@ -107,4 +97,32 @@ void configure_backlight_timer(void)
 void lcd_backlight_brightness(uint16_t brightness)
 {
 	tcc_set_compare_value(&tcc_instance, CONF_PWM_CHANNEL, brightness*10);
+}
+
+void configure_gpio_pins(void)
+{
+	// Structs for pin configuration
+	struct port_config pin_conf;
+	port_get_config_defaults(&pin_conf);
+	
+	// Setup SPI LCD CS Pin
+	pin_conf.input_pull = SYSTEM_PINMUX_PIN_PULL_NONE;
+	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(CONF_MASTER_SS_PIN, &pin_conf);
+	// Set SPI CS Pin high (default value)
+	port_pin_set_output_level(CONF_MASTER_SS_PIN, true);
+
+	// Setup LCD Data/Command select Pin 
+	pin_conf.input_pull = SYSTEM_PINMUX_PIN_PULL_NONE;
+	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(LCD_DCX_PIN, &pin_conf);
+	// Set DCX Pin low (default value)
+	port_pin_set_output_level(LCD_DCX_PIN, false);	
+
+	// Setup RESET Pin
+	pin_conf.input_pull = SYSTEM_PINMUX_PIN_PULL_NONE;
+	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(LCD_RESET_PIN, &pin_conf);
+	// Set RESET Pin high (default value)
+	port_pin_set_output_level(LCD_RESET_PIN, true);
 }
